@@ -7,6 +7,26 @@
 
 ---
 
+## 최소 요구사항
+
+| 항목 | 요구 버전 |
+|---|---|
+| **APSSPSDK (코어)** | `3.4.0` 이상 |
+| **iOS Deployment Target** | **`13.0` 이상** |
+| Swift Tools | `5.9` 이상 |
+| 네트워크 SDK | `AppLovinSDK` |
+
+**설치**
+
+```swift
+.package(url: "https://github.com/IGAWorksDev/ap-APSSPSDK-APSSPMediationAppLovinAdapter-SPM.git",
+         exact: "13060400.0.0")
+```
+
+> `Other Linker Flags` 에 **`-ObjC`** 추가 필수. 미설정 시 어댑터가 런타임에 인식되지 않습니다.
+
+---
+
 ## 13060400.0.0
 
 AppLovinSDK `13.6.4` 대응 · SPM 개별 배포 시작
