@@ -13,11 +13,11 @@ import AppLovinSDK
 
 final class AppLovinMediationRewardVideoAd: NSObject {
     
-    var delegate: APSSPRewardVideoAdapterDelegate?
+    weak var delegate: APSSPRewardVideoAdapterDelegate?
     
     private let placementId: String
     
-    private let rootViewController: UIViewController?
+    private weak var rootViewController: UIViewController?
     
     private var rewardVideoAd: ALAd?
     
@@ -27,6 +27,10 @@ final class AppLovinMediationRewardVideoAd: NSObject {
     private var isRewardVerified: Bool = false
     
     
+    deinit {
+        APLogger.debug("AppLovinMediationRewardVideoAd deinit")
+    }
+
     init(placementId: String, rootViewController: UIViewController?) {
         self.placementId = placementId
         self.rootViewController = rootViewController
@@ -57,6 +61,12 @@ final class AppLovinMediationRewardVideoAd: NSObject {
     func load() {
         incentivizedAd?.preloadAndNotify(self)
     }
+
+    /// AppLovin SDK 가 delegate 를 strong 으로 잡으므로 직접 끊는다.
+    func releaseSDKDelegates() {
+        incentivizedAd?.adDisplayDelegate = nil
+        incentivizedAd?.adVideoPlaybackDelegate = nil
+    }
         
 }
 
@@ -85,6 +95,7 @@ extension AppLovinMediationRewardVideoAd: ALAdLoadDelegate, ALAdDisplayDelegate,
     
     func ad(_ ad: ALAd, wasHiddenIn view: UIView) {
         delegate?.rewardVideoClosed(message: "AppLovin RewardVideo Closed")
+        releaseSDKDelegates()
     }
 
     func videoPlaybackBegan(in ad: ALAd) { }

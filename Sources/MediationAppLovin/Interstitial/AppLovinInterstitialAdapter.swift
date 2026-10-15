@@ -12,13 +12,18 @@ import APSSPSDK
 
 final public class AppLovinInterstitialAdapter: APSSPInterstitialAdapterProtocol {
 
-    public var rootViewController: UIViewController?
+    public weak var rootViewController: UIViewController?
     
-    public var delegate: APSSPInterstitialAdapterDelegate?
+    public weak var delegate: APSSPInterstitialAdapterDelegate?
     
     private var applovinMediationInterstitialAd: AppLovinMediationInterstitialAd?
 
     
+    deinit {
+        APLogger.debug("AppLovinInterstitialAdapter deinit")
+        applovinMediationInterstitialAd?.releaseSDKDelegates()
+    }
+
     public init(placementDic: [String: String], rootViewController: UIViewController?, info: [String : Any?]) {
         let placementId = placementDic[APSSPPlacementKey.appLovinZoneId.rawValue] ?? ""
         applovinMediationInterstitialAd = AppLovinMediationInterstitialAd(placementId: placementId)
@@ -31,6 +36,7 @@ final public class AppLovinInterstitialAdapter: APSSPInterstitialAdapterProtocol
     }
     
     public func disconnectDelegate() {
+        applovinMediationInterstitialAd?.releaseSDKDelegates()
         applovinMediationInterstitialAd?.delegate = nil
         delegate = nil
     }

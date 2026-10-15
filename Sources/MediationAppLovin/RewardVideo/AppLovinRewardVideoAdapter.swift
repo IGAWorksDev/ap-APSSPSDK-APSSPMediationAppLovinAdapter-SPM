@@ -11,12 +11,17 @@ import APSSPSDK
 
 
 final public class AppLovinRewardVideoAdapter: APSSPRewardVideoAdapterProtocol {
-    public var rootViewController: UIViewController?
+    public weak var rootViewController: UIViewController?
 
     private var applovinMediationRewardVideoAd: AppLovinMediationRewardVideoAd?
     
-    public var delegate: APSSPRewardVideoAdapterDelegate?
+    public weak var delegate: APSSPRewardVideoAdapterDelegate?
     
+    deinit {
+        APLogger.debug("AppLovinRewardVideoAdapter deinit")
+        applovinMediationRewardVideoAd?.releaseSDKDelegates()
+    }
+
     public init(placementDic: [String: String], rootViewController: UIViewController?, info: [String : Any?]) {
         let placementId = placementDic[APSSPPlacementKey.appLovinZoneId.rawValue] ?? ""
         applovinMediationRewardVideoAd = AppLovinMediationRewardVideoAd(placementId: placementId, rootViewController: rootViewController)
@@ -29,6 +34,7 @@ final public class AppLovinRewardVideoAdapter: APSSPRewardVideoAdapterProtocol {
     }
 
     public func disconnectDelegate() {
+        applovinMediationRewardVideoAd?.releaseSDKDelegates()
         applovinMediationRewardVideoAd?.delegate = nil
         delegate = nil
     }

@@ -14,10 +14,15 @@ final public class AppLovinInterstitialVideoAdapter: APSSPInterstitialVideoAdapt
    
     private var applovinMediationInterstitialVideoAd: AppLovinMediationInterstitialVideoAd?
     
-    public var delegate: APSSPInterstitialVideoAdapterDelegate?
+    public weak var delegate: APSSPInterstitialVideoAdapterDelegate?
     
-    public var rootViewController: UIViewController?
+    public weak var rootViewController: UIViewController?
     
+    deinit {
+        APLogger.debug("AppLovinInterstitialVideoAdapter deinit")
+        applovinMediationInterstitialVideoAd?.releaseSDKDelegates()
+    }
+
     public init(placementDic: [String: String], rootViewController: UIViewController?, info: [String : Any?]) {
         let placementId = placementDic[APSSPPlacementKey.appLovinZoneId.rawValue] ?? ""
         applovinMediationInterstitialVideoAd = AppLovinMediationInterstitialVideoAd(placementId: placementId)
@@ -34,6 +39,7 @@ final public class AppLovinInterstitialVideoAdapter: APSSPInterstitialVideoAdapt
     }
 
     public func disconnectDelegate() {
+        applovinMediationInterstitialVideoAd?.releaseSDKDelegates()
         applovinMediationInterstitialVideoAd?.delegate = nil
         delegate = nil
     }

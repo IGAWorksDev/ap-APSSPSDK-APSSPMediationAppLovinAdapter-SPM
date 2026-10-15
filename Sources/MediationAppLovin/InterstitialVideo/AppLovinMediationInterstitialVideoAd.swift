@@ -13,12 +13,16 @@ import AppLovinSDK
 
 final class AppLovinMediationInterstitialVideoAd: NSObject {
     
-    var delegate: APSSPInterstitialVideoAdapterDelegate?
+    weak var delegate: APSSPInterstitialVideoAdapterDelegate?
     
     private let placementId: String
     
     private var interstitialVideoAd: ALAd?
     
+    deinit {
+        APLogger.debug("AppLovinMediationInterstitialVideoAd deinit")
+    }
+
     init(placementId: String) {
         self.placementId = placementId
     }
@@ -31,6 +35,13 @@ final class AppLovinMediationInterstitialVideoAd: NSObject {
         ALInterstitialAd.shared().show(interstitialVideoAd)
     }
     
+    /// ALInterstitialAd 싱글톤이 delegate 를 strong 으로 잡으므로, 아직 자신이 등록돼 있을 때만 끊는다.
+    func releaseSDKDelegates() {
+        let shared = ALInterstitialAd.shared()
+        if shared.adDisplayDelegate as AnyObject? === self { shared.adDisplayDelegate = nil }
+        if shared.adVideoPlaybackDelegate as AnyObject? === self { shared.adVideoPlaybackDelegate = nil }
+    }
+
     func load() {
         ALSdk.shared().adService.loadNextAd(forZoneIdentifier: placementId, andNotify: self)
     }
@@ -60,6 +71,7 @@ extension AppLovinMediationInterstitialVideoAd: ALAdLoadDelegate, ALAdDisplayDel
     
     func ad(_ ad: ALAd, wasHiddenIn view: UIView) {
         delegate?.interstitialVideoClosed(message: "AppLovin InterstitialVideo Closed")
+        releaseSDKDelegates()
     }
 
     func videoPlaybackBegan(in ad: ALAd) { }
